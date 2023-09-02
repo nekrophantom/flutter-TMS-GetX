@@ -101,7 +101,7 @@ class AuthController extends GetxController{
   void loadAuthToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     authToken.value = prefs.getString('authToken') ?? '';
-    print(authToken.value);
+    // print(authToken.value);
     // isAuthenticated.value = authToken.isNotEmpty;
   }
 }
