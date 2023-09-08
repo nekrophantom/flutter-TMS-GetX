@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tms_app/routes/app_routes.dart';
 
@@ -25,6 +26,10 @@ class AuthController extends GetxController{
     return null;
   }
 
+  AuthController() {
+    loadAuthToken();
+  }
+
   String? validatePassword(String? value){
     if(value == null || value.isEmpty){
       return "Password must be filled!";
@@ -37,10 +42,11 @@ class AuthController extends GetxController{
     try {
       final email     = emailController.text;
       final password  = passwordController.text;
-      final data  = {'email' : email, 'password' : password};
+      final data      = {'email' : email, 'password' : password};
       isLoading.value = true;
 
-      final response = await _apiService.post('login', data);
+      // final response = await _apiService.post('login', data);
+      final response = await http.post(_apiService.apiUrl('login'), body: data);
       final responseData = jsonDecode(response.body);
       saveAuthToken(responseData['data']['token']);
 
@@ -53,7 +59,7 @@ class AuthController extends GetxController{
           Get.snackbar('Error', error.value);
         }
       }
-
+      
     } catch (e) {
       error.value = 'An error occurred';
       Get.snackbar('Error', error.value);
@@ -65,23 +71,26 @@ class AuthController extends GetxController{
 
   Future<void> logout() async {
     try {
-      loadAuthToken();
-      // final prefs = await SharedPreferences.getInstance();
 
-      // String authToken = prefs.getString('authToken') ?? '';
-      print(authToken.value);
+      isLoading.value = true;
 
-      // final response = await http.post(
-      //   _apiService.apiUrl('logout'),
-      //   headers: {
-      //     'Authorization' : 'Bearer $token'
-      // });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove('authToken');
 
-      
+      final response = await http.post(
+        _apiService.apiUrl('logout'),
+        headers: {
+          'Authorization' : 'Bearer ${authToken.value}'
+      });
 
-      // if(response.statusCode == 200){
+      authToken.value = '';
 
-      // }
+      if(response.statusCode == 200){
+        Get.offAllNamed(AppRoutes.login);
+        Get.snackbar('Aww!', 'Please Come Back Again!');
+      }else{
+        Get.snackbar('Error', 'An error occured!');
+      }
       
     } catch (e) {
       error.value = 'An error occurred';
@@ -98,10 +107,10 @@ class AuthController extends GetxController{
     isAuthenticated.value = true;
   }
 
-  void loadAuthToken() async {
+  Future<void> loadAuthToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     authToken.value = prefs.getString('authToken') ?? '';
-    // print(authToken.value);
-    // isAuthenticated.value = authToken.isNotEmpty;
+    isAuthenticated.value = authToken.isNotEmpty;
+    update();
   }
 }

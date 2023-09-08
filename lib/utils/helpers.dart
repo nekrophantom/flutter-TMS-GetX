@@ -21,24 +21,31 @@ class ApiService{
     return Uri.parse(baseUrl + urlSegment);
   }
 
-  Future<http.Response> get(String endpoint) async {
-    final response = await http.get(apiUrl(endpoint));
+  Future<http.Response> get(String endpoint, String token) async {
+    final response = await http.get(apiUrl(endpoint), headers: {
+      'Authorization' : 'Bearer $token'
+    });
     return response;
   }
 
-  Future<http.Response> post(String endpoint, dynamic data) async {
-    final response = await http.post(apiUrl(endpoint), body: data);
-    // final respose = apiUrl(endpoint);
+  Future<http.Response> post(String endpoint, dynamic data, String token) async {
+    final response = await http.post(apiUrl(endpoint), body: data, headers: {
+      'Authorization' : 'Bearer $token'
+    });
     return response;
   }
 
-  Future<http.Response> put(String endpoint, dynamic data) async {
-    final response = await http.put(apiUrl(endpoint), body: data);
+  Future<http.Response> put(String endpoint, dynamic data, String token) async {
+    final response = await http.put(apiUrl(endpoint), body: data, headers: {
+      'Authorization' : 'Bearer $token'
+    });
     return response;
   }
 
-  Future<http.Response> delete(String endpoint) async {
-    final response = await http.delete(apiUrl(endpoint));
+  Future<http.Response> delete(String endpoint, String token) async {
+    final response = await http.delete(apiUrl(endpoint), headers: {
+      'Authorization' : 'Bearer $token'
+    });
     return response;
   }
 }
