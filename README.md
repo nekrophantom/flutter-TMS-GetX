@@ -1,17 +1,43 @@
-# tms_app
+# Task Management App - GetX
 
-A new Flutter project.
+This is a Flutter Project - Task Management App using API  from [Laravel Task Management API](https://github.com/nekrophantom/laravel-task-app-api) and GetX for State Management.
 
-## Getting Started
+## How to Use 
 
-This project is a starting point for a Flutter application.
+**Step 1:**
 
-A few resources to get you started if this is your first Flutter project:
+Download or clone this repo by using the link below:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```
+https://github.com/nekrophantom/flutter-TMS-GetX.git
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# flutter-TMS-GetX
+**Step 2:**
+
+Copy the example env file and make the required configuration changes in the .env file: 
+
+```
+cp .env.example .env
+```
+
+**Step 3:**
+
+Go to project root and execute the following command in terminal to get the required dependencies: 
+
+```
+flutter pub get 
+```
+
+**Step 4:**
+
+Go to project root and execute the following command in terminal to run the app: 
+
+```
+flutter run
+```
+
+or with the following command on VS Code:
+
+```
+Ctrl + f5
+```
