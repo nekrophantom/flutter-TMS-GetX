@@ -15,7 +15,13 @@ class ResponsiveHelper{
 }
 
 class ApiService{
-  static String baseUrl = '${dotenv.env["API_URL"]}:${dotenv.env["PORT"]}/api/';
+  
+  String? url = dotenv.env["API_URL"];
+  String? port = dotenv.env["PORT"];
+
+  // static String baseUrl = '${dotenv.env["API_URL"]}:${dotenv.env["PORT"]}/api/';
+
+  static String baseUrl = '${dotenv.env["API_URL"]}/api/';
 
   apiUrl(String urlSegment) {
     return Uri.parse(baseUrl + urlSegment);
@@ -30,6 +36,7 @@ class ApiService{
 
   Future<http.Response> post(String endpoint, dynamic data, String token) async {
     final response = await http.post(apiUrl(endpoint), body: data, headers: {
+      'Content-Type'  : 'application/json',
       'Authorization' : 'Bearer $token'
     });
     return response;

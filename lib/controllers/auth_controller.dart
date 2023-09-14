@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,10 +46,18 @@ class AuthController extends GetxController{
       final data      = {'email' : email, 'password' : password};
       isLoading.value = true;
 
-      // final response = await _apiService.post('login', data);
       final response = await http.post(_apiService.apiUrl('login'), body: data);
       final responseData = jsonDecode(response.body);
-      saveAuthToken(responseData['data']['token']);
+      final token = responseData['data']['token'];
+
+
+      const secureStorage = FlutterSecureStorage();
+      await secureStorage.write(key: 'authToken', value: token);
+      authToken.value = token;
+      isAuthenticated.value = true;
+
+      print(authToken.value);
+      // await saveAuthToken(responseData['data']['token']);
 
       if(formKey.currentState!.validate()){
         if(response.statusCode == 200){
@@ -73,9 +82,8 @@ class AuthController extends GetxController{
     try {
 
       isLoading.value = true;
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.remove('authToken');
+      const secureStorage = FlutterSecureStorage();
+      await secureStorage.delete(key: 'authToken');
 
       final response = await http.post(
         _apiService.apiUrl('logout'),
@@ -100,16 +108,16 @@ class AuthController extends GetxController{
     }
   }
 
-  void saveAuthToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('authToken', token);
+  Future<void> saveAuthToken(String token) async {
+    const secureStorage = FlutterSecureStorage();
+    await secureStorage.write(key: 'authToken', value: token);
     authToken.value = token;
     isAuthenticated.value = true;
   }
 
   Future<void> loadAuthToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    authToken.value = prefs.getString('authToken') ?? '';
+    const secureStorage = FlutterSecureStorage();
+    authToken.value = (await secureStorage.read(key: 'authToken'))!;
     isAuthenticated.value = authToken.isNotEmpty;
     update();
   }
