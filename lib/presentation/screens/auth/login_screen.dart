@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:tms_app/controllers/auth_controller.dart';
+import 'package:tms_app/presentation/widgets/auth_rich_text.dart';
+import 'package:tms_app/routes/app_routes.dart';
 import 'package:tms_app/utils/constant.dart';
 import 'package:tms_app/utils/helpers.dart';
 
@@ -74,6 +76,14 @@ class LoginScreen extends GetView<AuthController> {
                       ],
                     ),
                   ),
+                ),
+
+                SizedBox(height: ResponsiveHelper.screenHeight(context, 0.015)),
+
+                AuthRichText(
+                  title: "Don't have an account? ", 
+                  link: "Register here.", 
+                  onTap: () => Get.offAllNamed(AppRoutes.register)
                 )
               ],
             ),

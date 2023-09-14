@@ -12,4 +12,5 @@ class AppColors {
 
 class AppImages{
   static const String lock = 'assets/images/lock-svgrepo-com.svg';
+  static const String personAdd = 'assets/images/person-add-svgrepo-com.svg';
 }

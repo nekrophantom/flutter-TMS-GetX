@@ -74,6 +74,7 @@ flutter:
   assets:
     - .env
     - assets/images/lock-svgrepo-com.svg
+    - assets/images/person-add-svgrepo-com.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:tms_app/controllers/auth_controller.dart';
 
-class LoginBinding implements Bindings{
+class AuthBinding implements Bindings{
  
   @override
   void dependencies(){
