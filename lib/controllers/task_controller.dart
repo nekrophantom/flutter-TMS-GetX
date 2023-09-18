@@ -81,7 +81,9 @@ class TaskController extends GetxController{
  
         count  = datas.length;
         List<Task> taskList = datas.map((e) => Task.fromJson(e)).toList();
-        tasks.assignAll(taskList);
+        if(taskList.isNotEmpty){
+          tasks.assignAll(taskList);
+        }
         
       }else{
         error.value = "An error occured while fetching Task!";
