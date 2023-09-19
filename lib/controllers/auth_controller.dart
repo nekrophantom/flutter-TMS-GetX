@@ -140,7 +140,6 @@ class AuthController extends GetxController{
       }
       
     } catch (e) {
-      print(e);
       error.value = 'An error occurred';
       Get.snackbar('Error', e.toString());
     } finally {
