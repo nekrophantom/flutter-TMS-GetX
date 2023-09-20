@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:tms_app/utils/api_config.dart';
 
 class ResponsiveHelper{
   static double screenHeight(BuildContext context, double percentage){
@@ -22,10 +21,10 @@ class ApiService{
 
   // static String baseUrl = '${dotenv.env["API_URL"]}:${dotenv.env["PORT"]}/api/';
 
-  // static String baseUrl = '${dotenv.env["API_URL"]}/api/';
+  static String baseUrl = '${dotenv.env["API_URL"]}/api/';
 
   apiUrl(String urlSegment) {
-    return Uri.parse(ApiConfig.prodBaseUrl + urlSegment);
+    return Uri.parse(baseUrl + urlSegment);
   }
 
   Future<http.Response> get(String endpoint, String token) async {
