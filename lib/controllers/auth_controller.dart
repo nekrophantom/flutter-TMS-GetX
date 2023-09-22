@@ -13,6 +13,7 @@ class AuthController extends GetxController{
   var error           = ''.obs;
   var authToken       = ''.obs;
   var isAuthenticated = false.obs; 
+  var isLoggedIn      = true.obs;
 
   final formKey                                           = GlobalKey<FormState>();
   final TextEditingController emailController             = TextEditingController();
@@ -99,8 +100,9 @@ class AuthController extends GetxController{
         headers: {
           'Authorization' : 'Bearer ${authToken.value}'
       });
-
-      authToken.value = '';
+      
+      isLoggedIn.value  = false;
+      authToken.value   = '';
 
       if(response.statusCode == 200){
         Get.offAllNamed(AppRoutes.login);

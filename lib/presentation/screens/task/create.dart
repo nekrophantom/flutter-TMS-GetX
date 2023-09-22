@@ -153,15 +153,18 @@ class CreateTask extends GetView<TaskController>{
 
                 SizedBox(height: ResponsiveHelper.screenHeight(context, 0.025),),
 
-                ElevatedButton(
-                  onPressed: controller.isLoading.isTrue ? null : () async {
-                    if(controller.formKey.currentState!.validate()){
-                      await controller.store();
-                    }
-                  }, 
-                  child: controller.isLoading.isTrue ? const Center(child: CircularProgressIndicator(),) :  const Text('Submit')
-                )
-      
+                Obx(() {
+                  return controller.isLoading.value 
+                  ? const CircularProgressIndicator() 
+                  : ElevatedButton(
+                    onPressed: controller.isLoading.value ? null : () async {
+                      if(controller.formKey.currentState!.validate()){
+                        await controller.store();
+                      }
+                    }, 
+                    child: const Text('Submit')
+                  );  
+                })
               ],
             )
           ),

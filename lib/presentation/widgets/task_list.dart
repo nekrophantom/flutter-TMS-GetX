@@ -10,11 +10,71 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TaskController taskController = Get.find<TaskController>();
+
+    Widget buildLoadingWidget() {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return ListView.builder(
       itemCount: taskController.count,
       itemBuilder: (context, index) {
+        print(index);
+        if(index < 0 || index >= taskController.count){
+          return Container();
+        }
+
         final task = taskController.tasks[index];
         final DateFormat dateFormat = DateFormat('EEEE, dd MMM yyyy');
+
+        if (taskController.tasks.isEmpty){
+          return buildLoadingWidget();
+        }
+
+        void handleMenuItemSelected(String value) {
+          if(value == 'edit'){
+            print('edit id : ${task.id}'); 
+          } else if (value == 'delete'){
+            // print('delete id : ${task.id}');
+
+            showDialog(
+              context: context, 
+              builder: (BuildContext context) {
+                return Obx(() {
+                  final isLoading = taskController.isLoading.value;
+
+                  if(isLoading){
+                    return const CircularProgressIndicator();
+                  } else {
+                    return AlertDialog(
+                      title: const Text('Confirm Deletion'),
+                      content: Text('Are you sure you want to delete ${task.title}'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          }, 
+                          child: const Text('Cancel')
+                        ),
+
+                        ElevatedButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                            
+                            await taskController.delete(task.id);
+                          }, 
+                          child: const Text('Delete')
+                        )
+                      ],
+                    );
+                  }
+                });
+              },
+            );
+          }
+        }
+
         return Container(
           padding: const EdgeInsets.only(bottom: 12),
           child: Card(
@@ -23,7 +83,25 @@ class TaskList extends StatelessWidget {
             child: ListTile(
               title: Text(task.title.toString()),
               subtitle: Text('Due date : ${dateFormat.format(task.dueDate)}'),
-              trailing: IconButton(onPressed: (){}, icon: const FaIcon(FontAwesomeIcons.bars)),
+              trailing: PopupMenuButton<String>(
+                onSelected: handleMenuItemSelected,
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'edit',
+                    child: ListTile(
+                      leading: Icon(Icons.edit),
+                      title:  Text('Edit'),
+                    )
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: Icon(Icons.delete),
+                      title:  Text('Delete'),
+                    )
+                  ),
+                ]
+              ),
               leading: Container(alignment: Alignment.center, width: 50, child: getIcon(task.categoryName),),
             ),
           ),

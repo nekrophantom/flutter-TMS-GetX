@@ -62,17 +62,21 @@ class LoginScreen extends GetView<AuthController> {
         
                         SizedBox(height: ResponsiveHelper.screenHeight(context, 0.05),),
         
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: controller.isLoading.isTrue ? null : () async {
-                              if(controller.formKey.currentState!.validate()){
-                                await controller.login();
-                              }
-                            } , 
-                            child: controller.isLoading.isTrue ? const Center(child: CircularProgressIndicator(color: Colors.blue,)) : const Text('Sign in')
-                          ),
-                        )
+                        Obx(() {
+                          return controller.isLoading.value 
+                          ? const CircularProgressIndicator()
+                          : SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: controller.isLoading.isTrue ? null : () async {
+                                if(controller.formKey.currentState!.validate()){
+                                  await controller.login();
+                                }
+                              } , 
+                              child: const Text('Sign in')
+                            ),
+                          );
+                        })
                       ],
                     ),
                   ),
