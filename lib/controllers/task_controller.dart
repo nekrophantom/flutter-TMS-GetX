@@ -13,7 +13,7 @@ class TaskController extends GetxController{
   var isLoading = false.obs;
   var error     = ''.obs;
   var tasks     = <Task>[];
-  var count     = 0;
+  var count     = 0.obs;
 
   final AuthController _authController              = Get.find<AuthController>();
   final ApiService _apiService                      = ApiService();
@@ -36,16 +36,21 @@ class TaskController extends GetxController{
   @override
   void onInit(){
     super.onInit();
-      loadToken();
-      getAll();
-      getCategories();
+      // loadToken();
+      // getAll();
+      // getCategories();
 
-      // Future.wait([
-
-      //   loadToken(),
-      //   getAll(),
-      //   getCategories(),
-      // ]).then((value) => );
+      Future.wait([
+        // loadToken(),
+        // getAll(),
+        // getCategories(),
+         // Add a delay of 2 seconds before executing loadToken
+          Future.delayed(const Duration(seconds: 2), () => loadToken()),
+          // Add a delay of 1 second before executing getAll
+          Future.delayed(const Duration(seconds: 1), () => getAll()),
+          // Add a delay of 3 seconds before executing getCategories
+          Future.delayed(const Duration(seconds: 3), () => getCategories()),
+      ]);
   }
 
   Future loadToken() async {
@@ -82,7 +87,7 @@ class TaskController extends GetxController{
           error.value = "There is no data at the moment!";
         }
  
-        count  = datas.length;
+        count.value  = datas.length;
         List<Task> taskList = datas.map((e) => Task.fromJson(e)).toList();
         if(taskList.isNotEmpty){
           tasks.assignAll(taskList);
@@ -178,7 +183,7 @@ class TaskController extends GetxController{
           error.value = "There is no data at the moment!";
         }
 
-        count  = datas.length;
+        count.value  = datas.length;
         
         List<CategoryTask> categoriesList = datas.map((e) => CategoryTask.fromJson(e)).toList();
         categories.assignAll(categoriesList);

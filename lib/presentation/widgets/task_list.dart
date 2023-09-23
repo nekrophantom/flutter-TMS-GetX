@@ -18,10 +18,10 @@ class TaskList extends StatelessWidget {
     }
 
     return ListView.builder(
-      itemCount: taskController.count,
+      itemCount: taskController.count.value,
       itemBuilder: (context, index) {
         print(index);
-        if(index < 0 || index >= taskController.count){
+        if(index < 0 || index >= taskController.count.value){
           return Container();
         }
 
