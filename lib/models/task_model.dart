@@ -3,12 +3,12 @@ class Task{
   String? categoryName;
   String? title;
   String? description;
-  DateTime dueDate;
+  DateTime? dueDate;
   String? priority;
   String? status;
   String? userName;
-  DateTime createdAt;
-  DateTime updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   Task({
     required this.id,
