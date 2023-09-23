@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tms_app/controllers/auth_controller.dart';
 import 'package:tms_app/models/category_model.dart';
-import 'package:tms_app/models/task_model.dart';
+// import 'package:tms_app/models/task_model.dart';
 import 'package:tms_app/routes/app_routes.dart';
 import 'package:tms_app/utils/helpers.dart';
 
@@ -12,8 +12,8 @@ class TaskController extends GetxController{
 
   var isLoading = false.obs;
   var error     = ''.obs;
-  var tasks     = <Task>[];
-  var count     = 0;
+  var tasks     = [].obs;
+  var count     = 0.obs;
 
   final AuthController _authController              = Get.find<AuthController>();
   final ApiService _apiService                      = ApiService();
@@ -36,16 +36,22 @@ class TaskController extends GetxController{
   @override
   void onInit(){
     super.onInit();
-      loadToken();
-      getAll();
-      getCategories();
+      // loadToken();
+      // getAll();
+      // getCategories();
 
-      // Future.wait([
-
-      //   loadToken(),
-      //   getAll(),
-      //   getCategories(),
-      // ]).then((value) => );
+      Future.wait([
+        // loadToken(),
+        // getAll(),
+        // getCategories(),
+          
+          // Add a delay of 2 seconds before executing loadToken
+          Future.delayed(const Duration(seconds: 2), () => loadToken()),
+          // Add a delay of 1 second before executing getAll
+          Future.delayed(const Duration(seconds: 1), () => getAll()),
+          // Add a delay of 3 seconds before executing getCategories
+          Future.delayed(const Duration(seconds: 3), () => getCategories()),
+      ]);
   }
 
   Future loadToken() async {
@@ -76,17 +82,22 @@ class TaskController extends GetxController{
 
       if (response.statusCode == 200) {
         
-        final responseData        = jsonDecode(response.body);
-        final List<dynamic> datas =  responseData['data'];
-        if (datas.isEmpty) {
+        final responseData        = jsonDecode(response.body)['data'];
+
+        if (responseData.length <= 0) {
           error.value = "There is no data at the moment!";
         }
- 
-        count  = datas.length;
-        List<Task> taskList = datas.map((e) => Task.fromJson(e)).toList();
-        if(taskList.isNotEmpty){
-          tasks.assignAll(taskList);
-        }
+
+        tasks.value = responseData;
+
+        // Implement data to list #2
+        // final List<dynamic> responseData =  responseData['data'];
+        // count.value  = responseData.length;
+        // List<Task> taskList = responseData.map((e) => Task.fromJson(e)).toList();
+        // if(taskList.isNotEmpty){
+        //   tasks.assignAll(taskList);
+        // }
+
 
       }else{
         error.value = "An error occured while fetching Task!";
@@ -178,7 +189,7 @@ class TaskController extends GetxController{
           error.value = "There is no data at the moment!";
         }
 
-        count  = datas.length;
+        count.value  = datas.length;
         
         List<CategoryTask> categoriesList = datas.map((e) => CategoryTask.fromJson(e)).toList();
         categories.assignAll(categoriesList);

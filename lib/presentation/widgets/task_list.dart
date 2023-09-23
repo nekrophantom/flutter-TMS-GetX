@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -10,7 +12,7 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TaskController taskController = Get.find<TaskController>();
-
+    // print(taskController.tasks.length);
     Widget buildLoadingWidget() {
       return const Center(
         child: CircularProgressIndicator(),
@@ -18,15 +20,17 @@ class TaskList extends StatelessWidget {
     }
 
     return ListView.builder(
-      itemCount: taskController.count,
+      itemCount: taskController.tasks.length,
       itemBuilder: (context, index) {
-        print(index);
-        if(index < 0 || index >= taskController.count){
+        // print(index);
+        if(index < 0 || index >= taskController.tasks.length){
           return Container();
         }
 
         final task = taskController.tasks[index];
-        final DateFormat dateFormat = DateFormat('EEEE, dd MMM yyyy');
+        final DateFormat dateFormat = DateFormat('EE, dd MMM yyyy');
+        final taskDueDate = DateTime.parse(task['due_date']);  
+        // print(dateFormat.format(taskDueDate).runtimeType);
 
         if (taskController.tasks.isEmpty){
           return buildLoadingWidget();
@@ -34,7 +38,7 @@ class TaskList extends StatelessWidget {
 
         void handleMenuItemSelected(String value) {
           if(value == 'edit'){
-            print('edit id : ${task.id}'); 
+            print("edit id : ${task['id']}"); 
           } else if (value == 'delete'){
             // print('delete id : ${task.id}');
 
@@ -49,7 +53,7 @@ class TaskList extends StatelessWidget {
                   } else {
                     return AlertDialog(
                       title: const Text('Confirm Deletion'),
-                      content: Text('Are you sure you want to delete ${task.title}'),
+                      content: Text("Are you sure you want to delete ${task['title']}"),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -62,7 +66,7 @@ class TaskList extends StatelessWidget {
                           onPressed: () async {
                             Navigator.of(context).pop();
                             
-                            await taskController.delete(task.id);
+                            await taskController.delete(task['id']);
                           }, 
                           child: const Text('Delete')
                         )
@@ -81,8 +85,8 @@ class TaskList extends StatelessWidget {
             elevation: 4,
             color: Colors.grey[200],
             child: ListTile(
-              title: Text(task.title.toString()),
-              subtitle: Text('Due date : ${dateFormat.format(task.dueDate)}'),
+              title: Text(task['title'].toString()),
+              subtitle: Text('Due date : ${dateFormat.format(taskDueDate)}'),
               trailing: PopupMenuButton<String>(
                 onSelected: handleMenuItemSelected,
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -102,7 +106,7 @@ class TaskList extends StatelessWidget {
                   ),
                 ]
               ),
-              leading: Container(alignment: Alignment.center, width: 50, child: getIcon(task.categoryName),),
+              leading: Container(alignment: Alignment.center, width: 50, child: getIcon(task['categoryName']),),
             ),
           ),
         );
