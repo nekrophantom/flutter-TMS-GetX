@@ -12,7 +12,7 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TaskController taskController = Get.find<TaskController>();
-    // print(taskController.tasks.length);
+    
     Widget buildLoadingWidget() {
       return const Center(
         child: CircularProgressIndicator(),
@@ -22,7 +22,7 @@ class TaskList extends StatelessWidget {
     return ListView.builder(
       itemCount: taskController.tasks.length,
       itemBuilder: (context, index) {
-        // print(index);
+        
         if(index < 0 || index >= taskController.tasks.length){
           return Container();
         }
@@ -30,17 +30,17 @@ class TaskList extends StatelessWidget {
         final task = taskController.tasks[index];
         final DateFormat dateFormat = DateFormat('EE, dd MMM yyyy');
         final taskDueDate = DateTime.parse(task['due_date']);  
-        // print(dateFormat.format(taskDueDate).runtimeType);
-
+        
         if (taskController.tasks.isEmpty){
           return buildLoadingWidget();
         }
 
         void handleMenuItemSelected(String value) {
           if(value == 'edit'){
+
             print("edit id : ${task['id']}"); 
+          
           } else if (value == 'delete'){
-            // print('delete id : ${task.id}');
 
             showDialog(
               context: context, 
