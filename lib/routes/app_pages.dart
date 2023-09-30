@@ -3,7 +3,7 @@ import 'package:tms_app/bindings/auth_binding.dart';
 import 'package:tms_app/bindings/task_binding.dart';
 import 'package:tms_app/presentation/screens/auth/register_screen.dart';
 import 'package:tms_app/presentation/screens/home_screen.dart';
-import 'package:tms_app/presentation/screens/task/create.dart';
+import 'package:tms_app/presentation/screens/task/create_screen.dart';
 import 'package:tms_app/routes/app_routes.dart';
 
 import '../presentation/screens/auth/login_screen.dart';
@@ -23,8 +23,9 @@ class AppPages{
     ),
     GetPage(
       name: AppRoutes.createTask, 
-      page: () => const CreateTask(),
-      binding: TaskBinding()
+      page: () => const CreateTaskScreen(),
+      binding: TaskBinding(),
+      
     ),
     GetPage(
       name: AppRoutes.register, 

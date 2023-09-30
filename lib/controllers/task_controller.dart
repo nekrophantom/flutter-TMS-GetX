@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tms_app/controllers/auth_controller.dart';
 import 'package:tms_app/models/category_model.dart';
-// import 'package:tms_app/models/task_model.dart';
 import 'package:tms_app/routes/app_routes.dart';
 import 'package:tms_app/utils/helpers.dart';
 
-class TaskController extends GetxController{
+class TaskController extends GetxController {
 
   var isLoading = false.obs;
   var error     = ''.obs;
   var tasks     = [].obs;
   var count     = 0.obs;
+  var isEdit    = false.obs;
 
   final AuthController _authController              = Get.find<AuthController>();
   final ApiService _apiService                      = ApiService();
-  final Rx<DateTime?> _selectedDate                 = Rx<DateTime?>(null);
+  final Rx<DateTime?> selectedDate                  = Rx<DateTime?>(null);
   final GlobalKey<FormState> formKey                = GlobalKey<FormState>();
   final TextEditingController nameController        = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -31,7 +31,7 @@ class TaskController extends GetxController{
   List<String> status           = ['To do', 'In Progress', 'Done'];
   Rx<String?> selectedStatus    = Rx<String?>(null);
 
-  DateTime? get selectedDate => _selectedDate.value;
+  // DateTime? get selectedDate => _selectedDate.value;
 
   @override
   void onInit(){
@@ -53,6 +53,7 @@ class TaskController extends GetxController{
           Future.delayed(const Duration(seconds: 3), () => getCategories()),
       ]);
   }
+
 
   Future loadToken() async {
     await _authController.loadAuthToken();
@@ -219,10 +220,17 @@ class TaskController extends GetxController{
     );
     
     if(pickedDate != null){
-      _selectedDate.value = pickedDate;
+      selectedDate.value = pickedDate;
       update();
     }
   }
 
-
+  Future<void> createOrUpdateTask() async {
+    if(isEdit.value){
+      print('update');
+    } else {
+      print(selectedCategory.value?.id);
+      print('create');
+    }
+  }
 }
