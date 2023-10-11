@@ -42,8 +42,9 @@ class ApiService{
     return response;
   }
 
-  Future<http.Response> put(String endpoint, dynamic data, String token) async {
+  Future<http.Response> update(String endpoint, dynamic data, String token) async {
     final response = await http.put(apiUrl(endpoint), body: data, headers: {
+      'Content-Type'  : 'application/json',
       'Authorization' : 'Bearer $token'
     });
     return response;

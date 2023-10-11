@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tms_app/controllers/auth_controller.dart';
@@ -13,7 +14,7 @@ class TaskController extends GetxController {
   var error     = ''.obs;
   var tasks     = [].obs;
   var count     = 0.obs;
-  var isEdit    = false.obs;
+  var getId     = ''.obs;
 
   final AuthController _authController              = Get.find<AuthController>();
   final ApiService _apiService                      = ApiService();
@@ -31,19 +32,10 @@ class TaskController extends GetxController {
   List<String> status           = ['To do', 'In Progress', 'Done'];
   Rx<String?> selectedStatus    = Rx<String?>(null);
 
-  // DateTime? get selectedDate => _selectedDate.value;
-
   @override
   void onInit(){
     super.onInit();
-      // loadToken();
-      // getAll();
-      // getCategories();
-
       Future.wait([
-        // loadToken(),
-        // getAll(),
-        // getCategories(),
           
           // Add a delay of 2 seconds before executing loadToken
           Future.delayed(const Duration(seconds: 2), () => loadToken()),
@@ -68,7 +60,7 @@ class TaskController extends GetxController {
 
    String? validateDescription(String? value){
     if(value == null || value.isEmpty){
-      return "Email must be filled!";
+      return "Description must be filled!";
     }
     return null;
   }
@@ -90,15 +82,6 @@ class TaskController extends GetxController {
         }
 
         tasks.value = responseData;
-
-        // Implement data to list #2
-        // final List<dynamic> responseData =  responseData['data'];
-        // count.value  = responseData.length;
-        // List<Task> taskList = responseData.map((e) => Task.fromJson(e)).toList();
-        // if(taskList.isNotEmpty){
-        //   tasks.assignAll(taskList);
-        // }
-
 
       }else{
         error.value = "An error occured while fetching Task!";
@@ -146,6 +129,42 @@ class TaskController extends GetxController {
     } catch (e) {
       error.value = 'An error occured. Please check your internet connection.';
       Get.snackbar('Error', error.value);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> put(String taskId) async{
+    try {
+
+      final name         = nameController.text;
+      final description  = descriptionController.text;
+      isLoading.value = true;
+
+       final Map<String, dynamic> data = {
+          'title' : name,
+          'description' : description,
+          'category_id' : selectedCategory.value?.id.toString(),
+          'priority' : selectedPriority.value,
+          'status'   : selectedStatus.value,
+          'due_date' : selectedDate.toString()
+        };
+
+      await Future.delayed(const Duration(seconds: 2));
+      final response = await _apiService.update('task/${getId.value}', jsonEncode(data), _authController.authToken.value);
+      
+      if (response.statusCode == 200){
+          Get.snackbar('Success', 'Update Task!');
+          Get.offAllNamed(AppRoutes.home);
+        } else {
+          final responseData = jsonDecode(response.body);
+          error.value = responseData['message'];
+          Get.snackbar('Error', error.value);
+      }
+      
+    } catch (e) {
+      error.value = 'An error occured. Please check your internet connection.';
+      Get.snackbar('Error', e.toString());
     } finally {
       isLoading.value = false;
     }
@@ -222,15 +241,6 @@ class TaskController extends GetxController {
     if(pickedDate != null){
       selectedDate.value = pickedDate;
       update();
-    }
-  }
-
-  Future<void> createOrUpdateTask() async {
-    if(isEdit.value){
-      print('update');
-    } else {
-      print(selectedCategory.value?.id);
-      print('create');
     }
   }
 }

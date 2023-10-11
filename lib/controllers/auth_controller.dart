@@ -49,7 +49,7 @@ class AuthController extends GetxController{
 
   String? validateConfirmPassword(String? value){
     if(value == null || value.isEmpty){
-      return "Password must be filled!";
+      return "Confirm Password must be filled!";
     }
     if(value != passwordController.text){
       return 'Password do not match.';

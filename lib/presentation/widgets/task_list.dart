@@ -1,10 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tms_app/controllers/task_controller.dart';
+import 'package:tms_app/routes/app_routes.dart';
 
 class TaskList extends StatelessWidget {
   const TaskList({super.key});
@@ -37,8 +36,18 @@ class TaskList extends StatelessWidget {
 
         void handleMenuItemSelected(String value) {
           if(value == 'edit'){
-
-            print("edit id : ${task['id']}"); 
+              Get.toNamed(
+                AppRoutes.editTask, 
+                parameters: {
+                  'id' : task['id'].toString(),
+                  'categoryName' : task['categoryName'],
+                  'title' : task['title'].toString(),
+                  'description' : task['description'].toString(),
+                  'due_date' : task['due_date'],
+                  'priority' : task['priority'],
+                  'status' : task['status']
+                }
+              );
           
           } else if (value == 'delete'){
 

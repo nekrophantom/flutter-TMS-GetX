@@ -5,11 +5,21 @@ import 'package:tms_app/controllers/task_controller.dart';
 import 'package:tms_app/models/category_model.dart';
 import 'package:tms_app/utils/helpers.dart';
 
-class CreateTaskScreen extends GetView<TaskController>{
-  const CreateTaskScreen({super.key});
+class EditTaskScreen extends GetView<TaskController>{
+  const EditTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final task = Get.parameters;
+    controller.getId.value = task['id']!;
+    controller.nameController.text = task['title']!;
+    controller.descriptionController.text = task['description']!;
+    controller.selectedCategory.value ??= controller.categories.firstWhere((element) => element.name == task['categoryName'],);
+    controller.selectedPriority.value ??= task['priority'];
+    controller.selectedStatus.value ??= task['status'];
+    controller.selectedDate.value = DateTime.parse(task['due_date']!);
+    
     return WillPopScope(
       onWillPop: () async {
         controller.nameController.clear();
@@ -22,7 +32,7 @@ class CreateTaskScreen extends GetView<TaskController>{
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Create a new Task!'),
+          title: const Text('Edit Task!'),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -31,10 +41,12 @@ class CreateTaskScreen extends GetView<TaskController>{
               key: controller.formKey,
               child: Column(
                 children: [
-        
     
                   DropdownButtonFormField<CategoryTask>(
-                    value: controller.selectedCategory.value,
+                    value: controller.selectedCategory.value ?? 
+                    controller.categories.firstWhere(
+                      (element) => element.name == task['categoryName'],
+                    ),
                     items: [
                       const DropdownMenuItem<CategoryTask>(
                         value: null,
@@ -65,9 +77,12 @@ class CreateTaskScreen extends GetView<TaskController>{
         
                   TextFormField(
                     controller: controller.nameController,
+                    onChanged: (newValue){
+                      controller.nameController.text = newValue;
+                    },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text('Name')
+                      label: Text('Title')
                     ),
                     validator: controller.validateName,
                   ),
@@ -87,7 +102,7 @@ class CreateTaskScreen extends GetView<TaskController>{
                   SizedBox(height: ResponsiveHelper.screenHeight(context, 0.015),),
                   
                    DropdownButtonFormField<String>(
-                    value: controller.selectedPriority.value,
+                    value: task['priority'],
                     items: [
                       const DropdownMenuItem<String>(
                         value: null,
@@ -114,8 +129,8 @@ class CreateTaskScreen extends GetView<TaskController>{
         
                   SizedBox(height: ResponsiveHelper.screenHeight(context, 0.015),),
                   
-                   DropdownButtonFormField(
-                    value: controller.selectedStatus.value,
+                  DropdownButtonFormField<String>(
+                    value: task['status'],
                     items: [
                       const DropdownMenuItem<String>(
                         value: null,
@@ -145,9 +160,12 @@ class CreateTaskScreen extends GetView<TaskController>{
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      
                       Obx(() {
                         return Text(
-                          controller.selectedDate.value == null ? 'Due date : ' : 'Due Date : ${DateFormat('E, dd MMM yyyy').format(controller.selectedDate.value as DateTime)}',
+                          task['due_date'] != null && controller.selectedDate.value == null 
+                          ? 'Due Date : ${DateFormat('E, dd MMM yyyy').format(DateTime.parse(task['due_date']!))}' 
+                          : 'Due Date : ${DateFormat('E, dd MMM yyyy').format(controller.selectedDate.value as DateTime)}',
                           style: const TextStyle(
                             fontSize: 18
                           ),
@@ -171,7 +189,7 @@ class CreateTaskScreen extends GetView<TaskController>{
                     : ElevatedButton(
                       onPressed: controller.isLoading.value ? null : () async {
                         if(controller.formKey.currentState!.validate()){
-                          await controller.store();
+                          await controller.put(task['id']!);
                         }
                       }, 
                       child: const Text('Submit')
